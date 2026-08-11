@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "first_name": "Ali",
+        "last_name": "Ahmadi",
+        "student_number": "1001",
+        "major": "Computer Engineering",
+        "selected_courses": []
+    },
+    {
+        "id": 2,
+        "first_name": "Sara",
+        "last_name": "Mohammadi",
+        "student_number": "1002",
+        "major": "Computer Engineering",
+        "selected_courses": []
+    },
+    {
+        "id": 3,
+        "first_name": "string",
+        "last_name": "string",
+        "student_number": "string",
+        "major": "string",
+        "selected_courses": []
+    }
+]

@@ -1,14 +1,18 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse, FileResponse
+from contextlib import asynccontextmanager
+
 from routers import students
 from routers import professors
 from routers import courses
 from routers import enrollment
-from contextlib import asynccontextmanager
+
 from data.storage import save_all
-from fastapi.responses import JSONResponse
+
 from exceptions.custom_exceptions import (
     CourseSelectionException,
 )
+
 # برای ساخت سرویس‌ها و دیتابیس در زمان اجرای برنامه
 from dependencies import (
     db,
@@ -17,6 +21,7 @@ from dependencies import (
     professor_service,
     enrollment_service,
 )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,16 +32,38 @@ async def lifespan(app: FastAPI):
         db.professors,
         db.courses
     )
+
+
 app = FastAPI(
     title="University System API",
+    description="University Management System",
+    version="1.0.0",
     lifespan=lifespan
 )
 
+
+# =========================
+# Routers
+# =========================
 
 app.include_router(students.router)
 app.include_router(professors.router)
 app.include_router(courses.router)
 app.include_router(enrollment.router)
+
+
+# =========================
+# Home Page
+# =========================
+
+@app.get("/", include_in_schema=False)
+def home():
+    return FileResponse("static/index.html")
+
+
+# =========================
+# Exception Handling
+# =========================
 
 @app.exception_handler(CourseSelectionException)
 async def course_selection_exception_handler(request, exc):
@@ -48,11 +75,10 @@ async def course_selection_exception_handler(request, exc):
         }
     )
 
-@app.get("/")
-def home():
-    return {
-        "message": "University System API is running"
-    }
+
+# =========================
+# Summary / Statistics
+# =========================
 
 @app.get("/summary")
 @app.get("/stats")
@@ -62,9 +88,14 @@ def summary():
         "professors_count": len(db.professors),
         "courses_count": len(db.courses)
     }
+
+
+# =========================
+# All Data
+# =========================
+
 @app.get("/all-data")
 def all_data():
-
     return {
         "students": [
             student.to_dict()
